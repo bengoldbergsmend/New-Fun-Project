@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import CuteLLM from './CuteLLM';
+import TextGenLLM from './TextGenLLM';
+import SummarizeLLM from './SummarizeLLM';
+import SentimentLLM from './SentimentLLM';
 
 const randomFacts = [
   "Ben once solved a Rubik's cube in under a minute!",
@@ -94,6 +97,15 @@ const App: React.FC = () => {
       <hr style={{ margin: '32px 0' }} />
       <h2>🤖 Ask the Cute LLM</h2>
       <CuteLLM />
+      <hr style={{ margin: '32px 0' }} />
+      <h2>📝 Text Generation LLM</h2>
+      <TextGenLLM />
+      <hr style={{ margin: '32px 0' }} />
+      <h2>📰 Summarization LLM</h2>
+      <SummarizeLLM />
+      <hr style={{ margin: '32px 0' }} />
+      <h2>📊 Sentiment Analysis LLM</h2>
+      <SentimentLLM />
       <p style={{ marginTop: 32, fontSize: '0.9em', color: '#888' }}>
         All features are built with secure React practices: no dangerous HTML, no direct DOM manipulation, and all state is managed safely.
       </p>
