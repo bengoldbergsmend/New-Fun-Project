@@ -1,0 +1,43 @@
+name: Mend CLI Scan
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  mend-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker image
+      run: docker build -t new-fun-project:latest .
+
+    - name: Install dependencies
+      run: |
+        npm install
+        cd my-amazing-site && npm install
+
+    - name: Mend CLI Scan
+      env:
+        MEND_EMAIL: test_again@mend.io
+        MEND_USER_KEY: 2179fbd4279b4017bc4b2ac52afe29cd94a5f7c59306462383ed75e27d3b1fd9
+        MEND_URL: https://saas-eu.mend.io
+      run: |
+        echo "Downloading Mend CLI"
+        curl https://downloads.mend.io/cli/linux_amd64/mend -o /usr/local/bin/mend && chmod +x /usr/local/bin/mend
+        
+        echo "Running Mend Dependencies Scan"
+        mend dep -u -s "beng_demo_gh//BenG//CSM_V1" -r
+
+        echo "Running Mend Code Scan"
+        mend code -s "beng_demo_gh//BenG//CSM_V1" --snippet-size 0
+
+        echo "Running Mend Image Scan"
+        mend image ubuntu:latest --scope "beng_demo_gh//BenG//CSM_V1" 
