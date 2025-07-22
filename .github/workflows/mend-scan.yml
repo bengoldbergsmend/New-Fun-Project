@@ -9,7 +9,7 @@ env:
   DOCKER_IMAGE_NAME: new-fun-project
   DOCKER_REPO_NAME: ${{ github.repository_owner }}
   DOCKER_TAG: dev-${{ github.run_number }}
-  MEND_EMAIL: test_again@mend.io
+  MEND_EMAIL: ben.goldberg@mend.io
   MEND_USER_KEY: 2179fbd4279b4017bc4b2ac52afe29cd94a5f7c59306462383ed75e27d3b1fd9
   MEND_URL: https://saas-eu.mend.io
 
