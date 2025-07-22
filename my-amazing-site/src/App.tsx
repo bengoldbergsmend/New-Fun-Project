@@ -3,6 +3,7 @@ import CuteLLM from './CuteLLM';
 import TextGenLLM from './TextGenLLM';
 import SummarizeLLM from './SummarizeLLM';
 import SentimentLLM from './SentimentLLM';
+import { XSSDemo } from './VulnerableReactDemo';
 
 const randomFacts = [
   "Ben once solved a Rubik's cube in under a minute!",
@@ -28,6 +29,7 @@ const App: React.FC = () => {
   const [bgColor, setBgColor] = useState('#f9f9ff');
   const [count, setCount] = useState(0);
   const [emoji, setEmoji] = useState('😎');
+  const [xssInput, setXssInput] = useState('<img src=x onerror=alert("XSS_DEMO") />');
 
   function handleNewFact() {
     let newFact = getRandomFact();
@@ -106,6 +108,22 @@ const App: React.FC = () => {
       <hr style={{ margin: '32px 0' }} />
       <h2>📊 Sentiment Analysis LLM</h2>
       <SentimentLLM />
+
+      {/* Add Vulnerable Code Demo */}
+      <hr style={{ margin: '32px 0' }} />
+      <h2>☢️ Vulnerable Code Demo (SAST)</h2>
+      <p>This demonstrates a live XSS vulnerability. Do not enter real data.</p>
+      <input
+        type="text"
+        value={xssInput}
+        onChange={e => setXssInput(e.target.value)}
+        style={{ padding: 8, borderRadius: 6, border: '1px solid red', width: '80%', margin: '10px 0' }}
+      />
+      <h3>Rendered Output:</h3>
+      <div style={{ border: '1px solid red', padding: '10px', minHeight: '50px' }}>
+        <XSSDemo userInput={xssInput} />
+      </div>
+
       <p style={{ marginTop: 32, fontSize: '0.9em', color: '#888' }}>
         All features are built with secure React practices: no dangerous HTML, no direct DOM manipulation, and all state is managed safely.
       </p>
