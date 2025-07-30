@@ -14,8 +14,83 @@ env:
   MEND_URL: https://saas-eu.mend.io
 
 jobs:
+  test-app:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: my-amazing-site/package-lock.json
+    
+    - name: Install dependencies
+      run: |
+        cd my-amazing-site
+        npm ci
+    
+    - name: Build the React app
+      run: |
+        cd my-amazing-site
+        npm run build
+    
+    - name: Test the built app
+      run: |
+        cd my-amazing-site
+        
+        # Start the preview server in background
+        npm run preview &
+        SERVER_PID=$!
+        sleep 10
+        
+        # Test basic connectivity
+        echo "Testing basic connectivity..."
+        curl -f http://localhost:4173 || (echo "App failed to serve" && kill $SERVER_PID && exit 1)
+        
+        # Test that LLM sections are present in the HTML
+        echo "Testing LLM components presence..."
+        RESPONSE=$(curl -s http://localhost:4173)
+        
+        if echo "$RESPONSE" | grep -q "Ask the Cute LLM"; then
+          echo "✅ CuteLLM section found"
+        else
+          echo "❌ CuteLLM section missing"
+          kill $SERVER_PID && exit 1
+        fi
+        
+        if echo "$RESPONSE" | grep -q "Text Generation LLM"; then
+          echo "✅ TextGenLLM section found"
+        else
+          echo "❌ TextGenLLM section missing"
+          kill $SERVER_PID && exit 1
+        fi
+        
+        if echo "$RESPONSE" | grep -q "Summarization LLM"; then
+          echo "✅ SummarizeLLM section found"
+        else
+          echo "❌ SummarizeLLM section missing"
+          kill $SERVER_PID && exit 1
+        fi
+        
+        if echo "$RESPONSE" | grep -q "Sentiment Analysis LLM"; then
+          echo "✅ SentimentLLM section found"
+        else
+          echo "❌ SentimentLLM section missing"
+          kill $SERVER_PID && exit 1
+        fi
+        
+        echo "All LLM components found in the built application!"
+        
+        # Clean up
+        kill $SERVER_PID || true
+
   mend-scan:
     runs-on: ubuntu-latest
+    needs: test-app
 
     steps:
     - name: Checkout code
